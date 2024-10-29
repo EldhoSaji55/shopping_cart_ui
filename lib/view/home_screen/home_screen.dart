@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shopping_cart_ui/productdetail_screen/productdetail_screen.dart';
+import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
+import 'package:shopping_cart_ui/controller/homescreen_Controller/homescreenController.dart';
+import 'package:shopping_cart_ui/main.dart';
+
+import 'package:shopping_cart_ui/view/productdetail_screen/productdetail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -213,57 +218,25 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SingleChildScrollView(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
-              scrollDirection: Axis.horizontal,
-              child: OverflowBar(
-                spacing: 15,
-                children: [
-                  MaterialButton(
-                    color: Colors.black,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    textColor: Colors.white,
+            Container(
+              height: 50,
+              width: double.infinity,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 5,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)))),
                     onPressed: () {},
-                    child: Text(
-                      "All",
-                      style: TextStyle(fontSize: 18),
-                    ),
+                    child: Text(context
+                            .watch<Homescreencontroller>()
+                            .categoryList?[index] ??
+                        "Null"),
                   ),
-                  ElevatedButton(
-                    onPressed: null,
-                    child: Text(
-                      "Men",
-                      style: TextStyle(color: Colors.black, fontSize: 18),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: null,
-                    child: Text(
-                      "Women",
-                      style: TextStyle(color: Colors.black, fontSize: 18),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: null,
-                    child: Text(
-                      "Kids",
-                      style: TextStyle(color: Colors.black, fontSize: 18),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             Expanded(

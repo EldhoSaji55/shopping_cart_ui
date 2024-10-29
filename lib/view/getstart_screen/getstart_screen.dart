@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping_cart_ui/home_screen/home_screen.dart';
+import 'package:shopping_cart_ui/view/home_screen/home_screen.dart';
 
 class GetstartScreen extends StatelessWidget {
   const GetstartScreen({super.key});
@@ -11,27 +11,25 @@ class GetstartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-          child: Expanded(
-            child: Container(
-              child: Column(children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 30.0, top: 30),
-                  child: Text(
-                    "Define yourself in your unique way.",
-                    style: GoogleFonts.poppins(
-                        textStyle: TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.w700,
-                            height: 1)),
-                  ),
+          child: Container(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0, top: 30),
+                child: Text(
+                  "Define yourself in your unique way.",
+                  style: GoogleFonts.poppins(
+                      textStyle: TextStyle(
+                          fontSize: 50,
+                          fontWeight: FontWeight.w700,
+                          height: 1)),
                 ),
-                Container(
-                  child: Image.asset(
-                    "assets/images/gtsart_model.jpg",
-                  ),
+              ),
+              Container(
+                child: Image.asset(
+                  "assets/images/gtsart_model.jpg",
                 ),
-              ]),
-            ),
+              ),
+            ]),
           ),
         ),
         bottomNavigationBar: BottomAppBar(
