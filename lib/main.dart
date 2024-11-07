@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_cart_ui/controller/cartscreencontroller.dart/cartScreenController.dart';
 import 'package:shopping_cart_ui/controller/homescreen_Controller/homescreenController.dart';
+import 'package:shopping_cart_ui/controller/productDetailScreenController.dart/productDetailScreencontroller.dart';
 import 'package:shopping_cart_ui/view/getstart_screen/getstart_screen.dart';
 
 void main(List<String> args) {
@@ -16,6 +18,12 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => Homescreencontroller(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Productdetailscreencontroller(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Cartscreencontroller(),
         )
       ],
       child: MaterialApp(

@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_cart_ui/controller/cartscreencontroller.dart/cartScreenController.dart';
 import 'package:shopping_cart_ui/controller/homescreen_Controller/homescreenController.dart';
 import 'package:shopping_cart_ui/main.dart';
 
 import 'package:shopping_cart_ui/view/productdetail_screen/productdetail_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        await context.read<Cartscreencontroller>().initDb();
+        await context.read<Homescreencontroller>().getCategories();
+        await context.read<Homescreencontroller>().getAllProducts();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,142 +188,173 @@ class HomeScreen extends StatelessWidget {
             )
           ],
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(10)),
+        body: Consumer<Homescreencontroller>(
+          builder: (context, homeController, child) => homeController.isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 30, right: 30, top: 8),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.search,
-                            color: Colors.black,
-                            size: 35,
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.search,
+                                    color: Colors.black,
+                                    size: 35,
+                                  ),
+                                  Text(
+                                    "Search anything",
+                                    style: TextStyle(
+                                        color: Colors.grey[600], fontSize: 17),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          Text(
-                            "Search anything",
-                            style: TextStyle(
-                                color: Colors.grey[600], fontSize: 17),
+                          SizedBox(
+                            width: 10,
                           ),
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.black),
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.filter_list,
+                                size: 30,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.black),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.filter_list,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              height: 50,
-              width: double.infinity,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 5,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)))),
-                    onPressed: () {},
-                    child: Text(context
-                            .watch<Homescreencontroller>()
-                            .categoryList?[index] ??
-                        "Null"),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    childAspectRatio: 1 / 2,
-                    mainAxisSpacing: 10),
-                itemBuilder: (context, index) => Container(
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProductdetailScreen(),
-                              ));
-                        },
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                DataList[index]["image"],
-                              ),
+                    Container(
+                      height: 50,
+                      width: double.infinity,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: homeController.categoryList.length,
+                        itemBuilder: (context, index) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    homeController.selectedCategoryIndex ==
+                                            index
+                                        ? WidgetStatePropertyAll(Colors.black)
+                                        : WidgetStatePropertyAll(Colors.white),
+                                shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)))),
+                            onPressed: () {
+                              homeController.onCategorySelection(index);
+                            },
+                            child: Text(
+                              homeController.categoryList[index].toString(),
+                              style: TextStyle(
+                                  color: homeController.selectedCategoryIndex ==
+                                          index
+                                      ? Colors.white
+                                      : Colors.black),
                             ),
-                            Positioned(
-                              right: 10,
-                              top: 10,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(4)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.favorite_border,
-                                    size: 30,
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
+                          ),
                         ),
                       ),
-                      Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            DataList[index]["proname"],
-                            style: TextStyle(
-                                fontWeight: FontWeight.w900, fontSize: 18),
-                          )),
-                      Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            DataList[index]["price"],
-                            style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color: Colors.grey),
-                          )),
-                    ],
-                  ),
+                    ),
+                    Expanded(
+                      child: GridView.builder(
+                        padding:
+                            const EdgeInsets.only(left: 30, right: 30, top: 20),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            childAspectRatio: 1 / 2,
+                            mainAxisSpacing: 10),
+                        itemBuilder: (context, index) => Container(
+                          child: Column(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  if (homeController.productList[index].id !=
+                                      null) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProductdetailScreen(
+                                                  product_id: homeController
+                                                      .productList[index].id!),
+                                        ));
+                                  }
+                                },
+                                child: Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.network(
+                                        height: 230,
+                                        homeController.productList[index].image
+                                            .toString(),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: 10,
+                                      top: 10,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.favorite_border,
+                                            size: 30,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    homeController.productList[index].title
+                                        .toString(),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 13),
+                                  )),
+                              Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "USD ${homeController.productList[index].price.toString()}",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.grey),
+                                  )),
+                            ],
+                          ),
+                        ),
+                        itemCount: homeController.productList.length,
+                      ),
+                    )
+                  ],
                 ),
-                itemCount: DataList.length,
-              ),
-            )
-          ],
         ),
         bottomNavigationBar: BottomAppBar(
           child:
